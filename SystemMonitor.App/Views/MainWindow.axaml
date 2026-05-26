@@ -1,0 +1,499 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SystemMonitor.App.ViewModels"
+        xmlns:ctrl="using:SystemMonitor.App.Controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1240" d:DesignHeight="820"
+        x:Class="SystemMonitor.App.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Sentinel System Monitor"
+        Width="1240"
+        Height="820"
+        MinWidth="1000"
+        MinHeight="680"
+        Background="#F1F5F9">
+
+    <Design.DataContext>
+        <vm:MainViewModel/>
+    </Design.DataContext>
+
+    <!-- ══════════════════ GLOBAL STYLES ══════════════════ -->
+    <Window.Styles>
+
+        <!-- Sidebar nav button -->
+        <Style Selector="Button.nav">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontFamily" Value="Inter, SF Pro Text, -apple-system, sans-serif"/>
+            <Setter Property="FontSize" Value="13.5"/>
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E2E8F0"/>
+        </Style>
+        <Style Selector="Button.nav.active">
+            <Setter Property="Background" Value="#E2E8F0"/>
+            <Setter Property="Foreground" Value="#0F172A"/>
+        </Style>
+
+        <!-- Metric card -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="20"/>
+        </Style>
+
+        <!-- Section title -->
+        <Style Selector="TextBlock.sec">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="FontFamily" Value="Inter, SF Pro Text, -apple-system, sans-serif"/>
+            <Setter Property="LetterSpacing" Value="0.8"/>
+        </Style>
+
+        <!-- Caption -->
+        <Style Selector="TextBlock.cap">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="FontFamily" Value="Inter, SF Pro Text, -apple-system, sans-serif"/>
+        </Style>
+
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="Inter, SF Pro Text, -apple-system, sans-serif"/>
+        </Style>
+
+    </Window.Styles>
+
+    <!-- ══════════════════ ROOT LAYOUT: Sidebar + Content ══════════════════ -->
+    <Grid ColumnDefinitions="220,*">
+
+        <!-- ╔══════════════════════════════╗ -->
+        <!-- ║          S I D E B A R       ║ -->
+        <!-- ╚══════════════════════════════╝ -->
+        <Border Grid.Column="0"
+                Background="#FFFFFF"
+                BorderBrush="#E2E8F0"
+                BorderThickness="0,0,1,0">
+
+            <Grid RowDefinitions="Auto,*,Auto" Margin="16,0">
+
+                <!-- Logo -->
+                <StackPanel Grid.Row="0" Margin="4,24,0,28" Spacing="2">
+                    <TextBlock Text="⬡ SENTINEL"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               Foreground="#0F172A"
+                               LetterSpacing="2"/>
+                    <TextBlock Text="System Monitor"
+                               Classes="cap"
+                               Margin="1,0,0,0"/>
+                </StackPanel>
+
+                <!-- Nav -->
+                <StackPanel Grid.Row="1" Spacing="4">
+                    <TextBlock Text="НАВИГАЦИЯ"
+                               FontSize="10"
+                               Foreground="#94A3B8"
+                               FontWeight="SemiBold"
+                               LetterSpacing="1.5"
+                               Margin="4,0,0,8"/>
+
+                    <Button Classes="nav active"
+                            Command="{Binding NavigateDashboardCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="◈" FontSize="15" VerticalAlignment="Center"/>
+                            <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="nav"
+                            Command="{Binding NavigateSettingsCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="⚙" FontSize="15" VerticalAlignment="Center"/>
+                            <TextBlock Text="Настройки" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Divider -->
+                    <Border Height="1" Background="#E2E8F0" Margin="4,12"/>
+
+                    <TextBlock Text="МОНИТОРИНГ"
+                               FontSize="10"
+                               Foreground="#94A3B8"
+                               FontWeight="SemiBold"
+                               LetterSpacing="1.5"
+                               Margin="4,0,0,8"/>
+
+                    <Button Classes="nav">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="☰" FontSize="15" VerticalAlignment="Center"/>
+                            <TextBlock Text="Процессы" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Classes="nav">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="⚑" FontSize="15" VerticalAlignment="Center"/>
+                            <TextBlock Text="Алерты" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Status footer -->
+                <Border Grid.Row="2"
+                        Background="#F1F5F9"
+                        CornerRadius="10"
+                        Padding="12,10"
+                        Margin="0,0,0,16">
+                    <StackPanel Spacing="6">
+                        <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+                            <Ellipse Width="7" Height="7" Fill="#10b981"/>
+                            <TextBlock Text="{Binding StatusText}"
+                                       FontSize="12"
+                                       Foreground="#64748B"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Uptime}"
+                                   Classes="cap"
+                                   Margin="14,0,0,0"/>
+                        <TextBlock Text="{Binding LastUpdate}"
+                                   Classes="cap"
+                                   Margin="14,0,0,0"
+                                   FontSize="11"/>
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+        </Border>
+
+        <!-- ╔══════════════════════════════════╗ -->
+        <!-- ║       M A I N   C O N T E N T   ║ -->
+        <!-- ╚══════════════════════════════════╝ -->
+        <ScrollViewer Grid.Column="1"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <Grid RowDefinitions="Auto,Auto,*"
+                  Margin="28,24,28,28"
+                  RowSpacing="20">
+
+                <!-- ── Header ─────────────────────────────────────────── -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Spacing="3">
+                        <TextBlock Text="Dashboard"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Foreground="#0F172A"/>
+                        <TextBlock Text="Мониторинг состояния системы в реальном времени"
+                                   Classes="cap"/>
+                    </StackPanel>
+
+                    <Border Grid.Column="1"
+                            Background="#F0FDF4"
+                            BorderBrush="#BBF7D0"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="14,8"
+                            VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Ellipse Width="8" Height="8" Fill="#10b981" VerticalAlignment="Center"/>
+                            <TextBlock Text="Telegram подключён"
+                                       FontSize="12"
+                                       Foreground="#15803D"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- ── 4 Arc Gauges ───────────────────────────────────── -->
+                <Grid Grid.Row="1"
+                      ColumnDefinitions="*,*,*,*"
+                      ColumnSpacing="14">
+
+                    <!-- CPU -->
+                    <Border Classes="card">
+                        <StackPanel Spacing="0">
+                            <TextBlock Text="CPU" Classes="sec" Margin="0,0,0,4"/>
+                            <ctrl:ArcGauge
+                                Value="{Binding CpuUsage}"
+                                Label="загрузка"
+                                Subtitle="{Binding CpuSubtitle}"
+                                ArcBrush="#3b82f6"
+                                Height="160"
+                                Margin="0,4,0,4"/>
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="Частота: –" Classes="cap"/>
+                                <TextBlock Text="Потоков: –"  Classes="cap"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- RAM -->
+                    <Border Grid.Column="1" Classes="card">
+                        <StackPanel Spacing="0">
+                            <TextBlock Text="RAM" Classes="sec" Margin="0,0,0,4"/>
+                            <ctrl:ArcGauge
+                                Value="{Binding RamUsage}"
+                                Label="занято"
+                                Subtitle="{Binding RamSubtitle}"
+                                ArcBrush="#a855f7"
+                                Height="160"
+                                Margin="0,4,0,4"/>
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="Доступно: –" Classes="cap"/>
+                                <TextBlock Text="Всего: –"    Classes="cap"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Disk -->
+                    <Border Grid.Column="2" Classes="card">
+                        <StackPanel Spacing="0">
+                            <TextBlock Text="DISK" Classes="sec" Margin="0,0,0,4"/>
+                            <ctrl:ArcGauge
+                                Value="{Binding DiskReadMbs}"
+                                Unit=" MB/s"
+                                Label="чтение"
+                                Subtitle="{Binding DiskSubtitle}"
+                                ArcBrush="#f97316"
+                                Height="160"
+                                Margin="0,4,0,4"/>
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="Запись: –"   Classes="cap"/>
+                                <TextBlock Text="Активность" Classes="cap"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Network -->
+                    <Border Grid.Column="3" Classes="card">
+                        <StackPanel Spacing="0">
+                            <TextBlock Text="NETWORK" Classes="sec" Margin="0,0,0,4"/>
+                            <ctrl:ArcGauge
+                                Value="{Binding NetworkReceivedMbs}"
+                                Unit=" MB/s"
+                                Label="загрузка"
+                                Subtitle="{Binding NetworkSubtitle}"
+                                ArcBrush="#10b981"
+                                Height="160"
+                                Margin="0,4,0,4"/>
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="Отдача: –"  Classes="cap"/>
+                                <TextBlock Text="Интерфейс"  Classes="cap"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+
+                <!-- ── Bottom row: Chart + Process list + Alert log ────── -->
+                <Grid Grid.Row="2"
+                      ColumnDefinitions="3*,2*"
+                      ColumnSpacing="14"
+                      RowDefinitions="Auto,Auto"
+                      RowSpacing="14">
+
+                    <!-- CPU History Chart -->
+                    <Border Classes="card">
+                        <StackPanel Spacing="14">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="ИСТОРИЯ CPU" Classes="sec"/>
+                                    <TextBlock Text="Нагрузка за последние 30 мин" Classes="cap"/>
+                                </StackPanel>
+                                <Border Grid.Column="1"
+                                        Background="#EFF6FF"
+                                        CornerRadius="6"
+                                        Padding="8,4"
+                                        VerticalAlignment="Top">
+                                    <TextBlock Text="CPU"
+                                               FontSize="11"
+                                               Foreground="#3b82f6"
+                                               FontWeight="SemiBold"/>
+                                </Border>
+                            </Grid>
+
+                            <!-- Chart area -->
+                            <Border Background="#F8FAFC"
+                                    BorderBrush="#E2E8F0"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="16,14"
+                                    Height="200">
+                                <ItemsControl ItemsSource="{Binding CpuChartPoints}"
+                                              VerticalAlignment="Bottom">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="1"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:ChartPoint">
+                                            <Grid RowDefinitions="*,Auto,Auto"
+                                                  Margin="3,0"
+                                                  VerticalAlignment="Stretch">
+                                                <!-- Bar gradient -->
+                                                <Border Grid.Row="0"
+                                                        Width="32"
+                                                        Height="{Binding Value}"
+                                                        MinHeight="12"
+                                                        MaxHeight="160"
+                                                        CornerRadius="6,6,3,3"
+                                                        VerticalAlignment="Bottom"
+                                                        HorizontalAlignment="Center">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                                                            <GradientStop Color="#3b82f6" Offset="0"/>
+                                                            <GradientStop Color="#BFDBFE" Offset="1"/>
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
+                                                </Border>
+                                                <!-- Value label -->
+                                                <TextBlock Grid.Row="1"
+                                                           Text="{Binding Value, StringFormat={}{0}%}"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#0F172A"
+                                                           HorizontalAlignment="Center"
+                                                           Margin="0,6,0,2"/>
+                                                <!-- Time label -->
+                                                <TextBlock Grid.Row="2"
+                                                           Text="{Binding Time}"
+                                                           Classes="cap"
+                                                           FontSize="10"
+                                                           HorizontalAlignment="Center"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Right column: Process list + Alert log -->
+                    <StackPanel Grid.Column="1" Spacing="14">
+
+                        <!-- Process list -->
+                        <Border Classes="card">
+                            <StackPanel Spacing="12">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="ТОП ПРОЦЕССЫ" Classes="sec"/>
+                                    <TextBlock Text="По загрузке CPU" Classes="cap"/>
+                                </StackPanel>
+
+                                <!-- Table header -->
+                                <Grid ColumnDefinitions="*,52,72"
+                                      ColumnSpacing="8">
+                                    <TextBlock Text="Процесс" Classes="cap" FontSize="11"/>
+                                    <TextBlock Grid.Column="1" Text="CPU"
+                                               Classes="cap" FontSize="11"
+                                               HorizontalAlignment="Right"/>
+                                    <TextBlock Grid.Column="2" Text="RAM"
+                                               Classes="cap" FontSize="11"
+                                               HorizontalAlignment="Right"/>
+                                </Grid>
+
+                                <Border Height="1" Background="#E2E8F0"/>
+
+                                <!-- Rows -->
+                                <ItemsControl ItemsSource="{Binding TopProcesses}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:ProcessMetric">
+                                            <Border Padding="0,6"
+                                                    BorderBrush="#E2E8F0"
+                                                    BorderThickness="0,0,0,1">
+                                                <Grid ColumnDefinitions="*,52,72"
+                                                      ColumnSpacing="8">
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <!-- Color dot -->
+                                                        <Ellipse Width="6" Height="6"
+                                                                 Fill="{Binding DotBrush}"
+                                                                 VerticalAlignment="Center"/>
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   FontSize="13"
+                                                                   Foreground="#0F172A"
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Cpu}"
+                                                               FontSize="13"
+                                                               Foreground="#3b82f6"
+                                                               FontWeight="SemiBold"
+                                                               HorizontalAlignment="Right"
+                                                               VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding Memory}"
+                                                               FontSize="13"
+                                                               Foreground="#64748b"
+                                                               HorizontalAlignment="Right"
+                                                               VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Alert log -->
+                        <Border Classes="card">
+                            <StackPanel Spacing="12">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="ЖУРНАЛ АЛЕРТОВ" Classes="sec"/>
+                                    <TextBlock Text="Последние события" Classes="cap"/>
+                                </StackPanel>
+
+                                <Border Height="1" Background="#E2E8F0"/>
+
+                                <ItemsControl ItemsSource="{Binding AlertLog}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:AlertLogEntry">
+                                            <Border Padding="0,6"
+                                                    BorderBrush="#E2E8F0"
+                                                    BorderThickness="0,0,0,1">
+                                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                                    <!-- Level dot -->
+                                                    <Ellipse Grid.RowSpan="2" Width="7" Height="7"
+                                                             VerticalAlignment="Center"
+                                                             Fill="{Binding LevelBrush}"/>
+                                                    <!-- Type + time -->
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                                                        <TextBlock Text="{Binding Type}"
+                                                                   FontSize="12"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#0F172A"/>
+                                                        <TextBlock Text="{Binding Time}"
+                                                                   Classes="cap"
+                                                                   FontSize="11"
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <!-- Message -->
+                                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                                               Text="{Binding Message}"
+                                                               FontSize="12"
+                                                               Foreground="#64748B"
+                                                               TextWrapping="Wrap"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+</Window>
