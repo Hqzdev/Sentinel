@@ -51,7 +51,7 @@ public sealed partial class MainViewModel : ViewModelBase
     [
         new("Visual Studio", "18%", "1.2 GB", "#3b82f6"),
         new("Chrome",        "14%", "2.1 GB", "#a855f7"),
-        new("Telegram",       "5%", "320 MB",  "#f97316"),
+        new("Finder",         "5%", "320 MB",  "#f97316"),
         new("System",         "3%", "180 MB",  "#10b981"),
     ];
 

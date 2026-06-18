@@ -5,9 +5,9 @@
 ## Общие правила
 
 - Пишите код так, чтобы ответственность класса была понятна из его названия.
-- Не смешивайте UI, бизнес-логику, работу с базой данных и внешние API в одном классе.
+- Не смешивайте UI, бизнес-логику, работу с базой данных и системными API в одном классе.
 - Новую функциональность размещайте в соответствующем слое архитектуры.
-- Секреты, токены Telegram, локальные базы данных и пользовательские настройки не добавляйте в Git.
+- Секреты, локальные базы данных и пользовательские настройки не добавляйте в Git.
 - Перед отправкой изменений убедитесь, что проект собирается без ошибок.
 
 ## Ветки и коммиты
@@ -16,7 +16,6 @@
 
 ```text
 feature/system-monitoring
-feature/telegram-bot
 fix/sqlite-logging
 docs/update-architecture
 ```
@@ -25,7 +24,7 @@ docs/update-architecture
 
 ```text
 Add CPU monitoring service
-Fix Telegram notification threshold
+Fix monitoring threshold
 Update architecture documentation
 ```
 
@@ -82,7 +81,7 @@ public string? ErrorMessage { get; init; }
 
 ### Асинхронность
 
-- Для операций с базой данных, файлами, Telegram API и долгими системными операциями используйте `async/await`.
+- Для операций с базой данных, файлами и долгими системными операциями используйте `async/await`.
 - Передавайте `CancellationToken` в сервисы, которые работают в фоне.
 - Не используйте `.Result` и `.Wait()` в асинхронном коде.
 
@@ -108,12 +107,10 @@ src/
 │   └── Options/
 ├── Sentinel.Services/
 │   ├── Monitoring/
-│   ├── Notifications/
-│   └── Telegram/
+│   └── Diagnostics/
 ├── Sentinel.Infrastructure/
 │   ├── Persistence/
-│   ├── SystemMetrics/
-│   └── External/
+│   └── SystemMetrics/
 └── Sentinel.Domain/
     ├── Entities/
     ├── Enums/
@@ -125,7 +122,7 @@ src/
 - XAML должен отвечать за разметку и визуальное представление.
 - Логика поведения должна находиться во ViewModel, а не в code-behind.
 - Используйте привязки данных и команды вместо прямого обращения к элементам UI.
-- ViewModel не должна напрямую работать с SQLite, Telegram API или `System.Diagnostics`.
+- ViewModel не должна напрямую работать с SQLite, системными API или `System.Diagnostics`.
 
 ## Тестирование
 
@@ -133,7 +130,7 @@ src/
 
 - расчет уровней предупреждений;
 - проверку порогов CPU, RAM и диска;
-- форматирование уведомлений;
+- форматирование записей журнала;
 - application-сценарии без привязки к WPF.
 
 Перед отправкой изменений выполните:
@@ -150,4 +147,3 @@ dotnet test
 - `README.md`, если меняется способ запуска или стек;
 - `docs/architecture/architecture.md`, если меняется архитектура;
 - комментарии в коде, если логика неочевидна.
-

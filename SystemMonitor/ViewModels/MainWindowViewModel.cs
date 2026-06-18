@@ -22,7 +22,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public string DiskUsageText => $"{DiskUsage}%";
 
-    public string TelegramStatus { get; } = "Telegram-бот подключен";
+    public string MonitorStatus { get; } = "Мониторинг активен";
 
     public string LastUpdate { get; } = "Последнее обновление: 13.05.2026 20:30";
 
@@ -41,7 +41,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [
         new("Visual Studio", "18%", "1.2 GB"),
         new("Chrome", "14%", "2.1 GB"),
-        new("Telegram", "5%", "320 MB"),
+        new("Finder", "5%", "320 MB"),
         new("System", "3%", "180 MB")
     ];
 

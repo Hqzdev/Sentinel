@@ -1,4 +1,5 @@
 using LibreHardwareMonitor.Hardware;
+using System.Diagnostics;
 using SystemMonitor.Core.Interfaces;
 using SystemMonitor.Core.Models;
 
@@ -10,22 +11,35 @@ namespace SystemMonitor.Infrastructure.Monitoring;
 /// </summary>
 public sealed class HardwareMetricsProvider : IMetricsProvider, IDisposable
 {
-    private readonly Computer _computer;
+    private readonly Computer? _computer;
+    private readonly DateTime _startedAt = DateTime.Now;
+    private DateTime _lastSampleAt = DateTime.Now;
+    private TimeSpan _lastTotalProcessorTime = Process.GetCurrentProcess().TotalProcessorTime;
 
     public HardwareMetricsProvider()
     {
-        _computer = new Computer
+        try
         {
-            IsCpuEnabled = true,
-            IsMemoryEnabled = true,
-            IsStorageEnabled = true,
-            IsNetworkEnabled = true,
-        };
-        _computer.Open();
+            _computer = new Computer
+            {
+                IsCpuEnabled = true,
+                IsMemoryEnabled = true,
+                IsStorageEnabled = true,
+                IsNetworkEnabled = true,
+            };
+            _computer.Open();
+        }
+        catch
+        {
+            _computer = null;
+        }
     }
 
     public Task<MetricsSnapshot> GetAsync(CancellationToken cancellationToken = default)
     {
+        if (_computer is null)
+            return Task.FromResult(GetFallbackSnapshot());
+
         foreach (var hw in _computer.Hardware)
             hw.Update();
 
@@ -68,6 +82,43 @@ public sealed class HardwareMetricsProvider : IMetricsProvider, IDisposable
         return Task.FromResult(snapshot);
     }
 
+    private MetricsSnapshot GetFallbackSnapshot()
+    {
+        using var currentProcess = Process.GetCurrentProcess();
+        var now = DateTime.Now;
+        var totalProcessorTime = currentProcess.TotalProcessorTime;
+        var elapsed = now - _lastSampleAt;
+        var processorDelta = totalProcessorTime - _lastTotalProcessorTime;
+
+        var cpu = elapsed.TotalMilliseconds > 0
+            ? processorDelta.TotalMilliseconds / (elapsed.TotalMilliseconds * Environment.ProcessorCount) * 100d
+            : 0d;
+
+        _lastSampleAt = now;
+        _lastTotalProcessorTime = totalProcessorTime;
+
+        var ram = GetProcessRamPercent(currentProcess);
+
+        return new MetricsSnapshot(
+            CpuPct: (float)Math.Clamp(cpu, 0d, 100d),
+            RamPct: ram,
+            DiskReadMbs: 0,
+            DiskWriteMbs: 0,
+            NetworkSentMbs: 0,
+            NetworkReceivedMbs: 0,
+            Uptime: now - _startedAt,
+            Timestamp: now);
+    }
+
+    private static float GetProcessRamPercent(Process process)
+    {
+        var totalMemoryBytes = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
+        if (totalMemoryBytes <= 0) return 0;
+
+        var percent = process.WorkingSet64 / (double)totalMemoryBytes * 100d;
+        return (float)Math.Clamp(percent, 0d, 100d);
+    }
+
     private static float? GetSensorValue(IHardware hw, SensorType type, string namePart)
     {
         foreach (var sensor in hw.Sensors)
@@ -76,5 +127,5 @@ public sealed class HardwareMetricsProvider : IMetricsProvider, IDisposable
         return null;
     }
 
-    public void Dispose() => _computer.Close();
+    public void Dispose() => _computer?.Close();
 }

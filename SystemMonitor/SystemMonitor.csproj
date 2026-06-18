@@ -23,6 +23,5 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.22" />
-    <PackageReference Include="Telegram.Bot" Version="22.10.0" />
   </ItemGroup>
 </Project>

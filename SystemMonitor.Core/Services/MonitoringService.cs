@@ -12,7 +12,6 @@ public sealed class MonitoringService : BackgroundService
 {
     private readonly IMetricsProvider _provider;
     private readonly ISettingsRepository _settingsRepo;
-    private readonly AlertEngine _alertEngine;
 
     /// <summary>
     /// Подписчики (обычно MainViewModel) получают свежий снимок метрик.
@@ -22,12 +21,10 @@ public sealed class MonitoringService : BackgroundService
 
     public MonitoringService(
         IMetricsProvider provider,
-        ISettingsRepository settingsRepo,
-        AlertEngine alertEngine)
+        ISettingsRepository settingsRepo)
     {
         _provider = provider;
         _settingsRepo = settingsRepo;
-        _alertEngine = alertEngine;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -40,8 +37,6 @@ public sealed class MonitoringService : BackgroundService
             var snapshot = await _provider.GetAsync(stoppingToken);
 
             SnapshotReceived?.Invoke(snapshot);
-
-            await _alertEngine.ProcessAsync(snapshot, settings.Thresholds, stoppingToken);
 
             await Task.Delay(interval, stoppingToken);
         }
