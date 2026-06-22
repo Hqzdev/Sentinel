@@ -1,0 +1,61 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SystemMonitor.App.ViewModels"
+        xmlns:views="using:SystemMonitor.App.ViewModels.Views"
+        x:Class="SystemMonitor.App.ViewModels.Views.MainWindow"
+        Width="1040"
+        Height="680"
+        MinWidth="860"
+        MinHeight="560"
+        Title="Sentinel System Monitor">
+    <Window.DataTemplates>
+        <DataTemplate DataType="{x:Type vm:OverviewViewModel}">
+            <views:OverviewView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:CpuDetailViewModel}">
+            <views:CpuDetailView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ProcessListViewModel}">
+            <views:ProcessListView />
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <Grid ColumnDefinitions="220,*">
+        <Border Background="#17202A"
+                Padding="20">
+            <StackPanel>
+                <TextBlock Text="Sentinel"
+                           Foreground="White"
+                           FontSize="26"
+                           FontWeight="Bold" />
+                <TextBlock Text="System Monitor"
+                           Foreground="#AAB7B8"
+                           Margin="0 4 0 28" />
+
+                <Button Classes="menu-button"
+                        Content="Обзор"
+                        Command="{Binding ShowOverviewCommand}" />
+                <Button Classes="menu-button"
+                        Content="Процессор"
+                        Command="{Binding ShowCpuCommand}" />
+                <Button Classes="menu-button"
+                        Content="Процессы"
+                        Command="{Binding ShowProcessesCommand}" />
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Column="1"
+              RowDefinitions="Auto,*"
+              Padding="28">
+            <TextBlock Text="{Binding Title}"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Margin="0 0 0 22" />
+
+            <ContentControl Grid.Row="1"
+                            Content="{Binding CurrentPage}" />
+        </Grid>
+    </Grid>
+</Window>

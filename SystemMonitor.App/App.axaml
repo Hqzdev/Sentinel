@@ -1,15 +1,24 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="using:SystemMonitor.App.ViewModels.Converters"
              x:Class="SystemMonitor.App.App"
-             xmlns:local="using:SystemMonitor.App"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+    <!--
+        Главный xaml файл приложения.
+        Здесь подключаются общие ресурсы и стили которые доступны всем окнам.
+    -->
+    <Application.Resources>
+        <!--
+            Конвертер процента в цвет.
+            Он нужен чтобы высокий CPU или RAM сразу подсвечивались красным.
+        -->
+        <converters:PercentToColorConverter x:Key="PercentToColorConverter" />
+    </Application.Resources>
 
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
-  
     <Application.Styles>
+        <!-- Базовая тема Avalonia чтобы элементы выглядели как обычное desktop приложение. -->
         <FluentTheme />
+        <!-- Наши собственные стили для карточек, кнопок и текста. -->
+        <StyleInclude Source="avares://SystemMonitor.App/Styles/Theme.axaml" />
     </Application.Styles>
 </Application>

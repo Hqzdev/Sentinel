@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SystemMonitor.App.ViewModels.Views.OverviewView">
+    <Grid RowDefinitions="Auto,Auto,*"
+          RowSpacing="18">
+        <Grid ColumnDefinitions="*,*,*"
+              ColumnSpacing="18">
+            <Border Classes="card">
+                <StackPanel>
+                    <TextBlock Classes="card-title"
+                               Text="CPU" />
+                    <TextBlock Classes="metric-value"
+                               Text="{Binding CpuUsagePercent, StringFormat={}{0:F1}%}"
+                               Foreground="{Binding CpuUsagePercent, Converter={StaticResource PercentToColorConverter}}" />
+                    <ProgressBar Minimum="0"
+                                 Maximum="100"
+                                 Value="{Binding CpuUsagePercent}" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1"
+                    Classes="card">
+                <StackPanel>
+                    <TextBlock Classes="card-title"
+                               Text="RAM" />
+                    <TextBlock Classes="metric-value"
+                               Text="{Binding MemoryUsagePercent, StringFormat={}{0:F1}%}"
+                               Foreground="{Binding MemoryUsagePercent, Converter={StaticResource PercentToColorConverter}}" />
+                    <ProgressBar Minimum="0"
+                                 Maximum="100"
+                                 Value="{Binding MemoryUsagePercent}" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2"
+                    Classes="card">
+                <StackPanel>
+                    <TextBlock Classes="card-title"
+                               Text="Процессы" />
+                    <TextBlock Classes="metric-value"
+                               Text="{Binding ProcessCount}" />
+                    <TextBlock Text="{Binding LastUpdate, StringFormat=Обновлено: {0}}"
+                               Foreground="#5D6D7E" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1"
+                Classes="card">
+            <TextBlock Text="Главный экран показывает общее состояние компьютера: загрузку процессора, память и количество процессов."
+                       TextWrapping="Wrap"
+                       Foreground="#34495E" />
+        </Border>
+    </Grid>
+</UserControl>

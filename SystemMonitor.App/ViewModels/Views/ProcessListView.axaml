@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SystemMonitor.App.ViewModels.Views.ProcessListView">
+    <Border Classes="card">
+        <Grid RowDefinitions="Auto,*">
+            <Grid ColumnDefinitions="90,*,120,120,140"
+                  Margin="0 0 0 12">
+                <TextBlock Text="PID"
+                           FontWeight="Bold" />
+                <TextBlock Grid.Column="1"
+                           Text="Имя"
+                           FontWeight="Bold" />
+                <TextBlock Grid.Column="2"
+                           Text="CPU"
+                           FontWeight="Bold" />
+                <TextBlock Grid.Column="3"
+                           Text="RAM"
+                           FontWeight="Bold" />
+                <TextBlock Grid.Column="4"
+                           Text="Статус"
+                           FontWeight="Bold" />
+            </Grid>
+
+            <ScrollViewer Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding Processes}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#E5E8E8"
+                                    BorderThickness="0 0 0 1"
+                                    Padding="0 10">
+                                <Grid ColumnDefinitions="90,*,120,120,140">
+                                    <TextBlock Text="{Binding ProcessId}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Name}" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding CpuUsagePercent, StringFormat={}{0:F1}%}" />
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding MemoryMegabytes, StringFormat={}{0} MB}" />
+                                    <TextBlock Grid.Column="4"
+                                               Text="{Binding Status}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

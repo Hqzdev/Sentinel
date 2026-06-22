@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SystemMonitor.App.ViewModels.Views.CpuDetailView">
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="18">
+        <Border Classes="card">
+            <StackPanel>
+                <TextBlock Classes="card-title"
+                           Text="Общая загрузка CPU" />
+                <TextBlock Classes="metric-value"
+                           Text="{Binding TotalUsagePercent, StringFormat={}{0:F1}%}"
+                           Foreground="{Binding TotalUsagePercent, Converter={StaticResource PercentToColorConverter}}" />
+                <ProgressBar Minimum="0"
+                             Maximum="100"
+                             Value="{Binding TotalUsagePercent}" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1"
+                Classes="card">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Cores}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="100,*,70"
+                                  Margin="0 0 0 12">
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center" />
+                                <ProgressBar Grid.Column="1"
+                                             Minimum="0"
+                                             Maximum="100"
+                                             Value="{Binding UsagePercent}"
+                                             VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding UsagePercent, StringFormat={}{0:F1}%}"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

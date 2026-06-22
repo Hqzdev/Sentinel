@@ -1,24 +1,32 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
 
 namespace SystemMonitor.App;
 
-sealed class Program
+// главный файл запуска приложения
+// он нужен чтобы запустить avalonia и открыть главное окно
+// тут не пишем бизнес логику потому что program только стартует приложение
+internal static class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
+    // Точка входа приложения.
+    // Здесь нельзя создавать окна напрямую потому что Avalonia ещё не инициализирована.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    }
 
-    // Avalonia configuration, don't remove; also used by visual designer.
+    // Создаём и настраиваем Avalonia приложение.
+    // Этот метод использует дизайнер Avalonia поэтому его держим отдельно.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        // Configure<App>() говорит Avalonia какой класс приложения использовать.
+        // UsePlatformDetect() сам выбирает настройки под Windows, macOS или Linux.
+        // WithInterFont() подключает нормальный шрифт для интерфейса.
+        // LogToTrace() пишет служебные сообщения Avalonia в отладочный вывод.
+        return AppBuilder.Configure<App>()
             .UsePlatformDetect()
-#if DEBUG
-            .WithDeveloperTools()
-#endif
             .WithInterFont()
             .LogToTrace();
+    }
 }

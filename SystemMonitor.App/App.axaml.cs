@@ -1,47 +1,40 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using SystemMonitor.App.ViewModels;
-using SystemMonitor.App.Views;
-using SystemMonitor.Infrastructure;
+using SystemMonitor.App.ViewModels.Views;
 
 namespace SystemMonitor.App;
 
+// главный класс avalonia приложения
+// он связывает xaml ресурсы и реальное главное окно
+// здесь только старт ui а не логика мониторинга
 public partial class App : Application
 {
-    private IHost? _host;
-
+    // Загружаем XAML ресурсы приложения.
+    // Без этого App.axaml не прочитается и стили не подключатся.
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
     }
 
+    // Создаём главное окно после старта Avalonia.
+    // DataContext передаёт окну модель данных для привязок.
     public override void OnFrameworkInitializationCompleted()
     {
-        _host = Host.CreateDefaultBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddInfrastructure();
-                services.AddSingleton<MainViewModel>();
-                services.AddSingleton<SettingsViewModel>();
-                services.AddSingleton<TrayViewModel>();
-            })
-            .Build();
-
+        // Проверяем что приложение запущено как обычное desktop приложение.
+        // Тогда можно создать главное окно и показать его пользователю.
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.Exit += (_, _) => _host.StopAsync().GetAwaiter().GetResult();
-
+            // MainWindow это оболочка интерфейса.
+            // MainWindowModel хранит команды меню и текущий открытый экран.
             desktop.MainWindow = new MainWindow
             {
-                DataContext = _host.Services.GetRequiredService<MainViewModel>(),
+                DataContext = MainWindowModel.Create()
             };
-
-            _host.StartAsync().GetAwaiter().GetResult();
         }
 
+        // Вызываем базовую реализацию чтобы Avalonia завершила свой стандартный запуск.
         base.OnFrameworkInitializationCompleted();
     }
 }
