@@ -8,20 +8,21 @@ using SystemMonitor.Infrastructure.Persistence;
 namespace SystemMonitor.Infrastructure;
 
 /// <summary>
-/// Extension-метод для регистрации всех Infrastructure-зависимостей в DI-контейнере.
-/// Вызывается из App.axaml.cs: services.AddInfrastructure()
+/// Точка подключения инфраструктурного слоя к приложению.
+/// Этот класс регистрирует реализации интерфейсов Core в контейнере Dependency Injection.
 /// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Добавляет в IServiceCollection все сервисы, которые нужны для реального мониторинга.
+    /// ISettingsRepository связывается с JsonSettingsRepository, IMetricsProvider — с HardwareMetricsProvider, IProcessMetricsProvider — с ProcessMetricsProvider.
+    /// MonitoringService регистрируется и как конкретный сервис, и как IHostedService, чтобы hosting-система могла запустить его в фоне.
+    /// </summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        // Persistence
         services.AddSingleton<ISettingsRepository, JsonSettingsRepository>();
-
-        // Monitoring
         services.AddSingleton<IMetricsProvider, HardwareMetricsProvider>();
-
-        // Core services
+        services.AddSingleton<IProcessMetricsProvider, ProcessMetricsProvider>();
         services.AddSingleton<MonitoringService>();
         services.AddSingleton<IHostedService>(sp => sp.GetRequiredService<MonitoringService>());
 

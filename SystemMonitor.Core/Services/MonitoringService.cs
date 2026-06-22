@@ -5,8 +5,9 @@ using SystemMonitor.Core.Models;
 namespace SystemMonitor.Core.Services;
 
 /// <summary>
-/// IHostedService — фоновый таймер опроса метрик.
-/// Публикует MetricsSnapshot через событие SnapshotReceived.
+/// Фоновый сервис мониторинга.
+/// Он работает как бесконечный цикл: загружает настройки, запрашивает метрики у IMetricsProvider, публикует MetricsSnapshot через событие и ждет следующий интервал.
+/// Наследование от BackgroundService позволяет запускать сервис через стандартный hosting-механизм Microsoft.Extensions.Hosting.
 /// </summary>
 public sealed class MonitoringService : BackgroundService
 {
@@ -14,11 +15,17 @@ public sealed class MonitoringService : BackgroundService
     private readonly ISettingsRepository _settingsRepo;
 
     /// <summary>
-    /// Подписчики (обычно MainViewModel) получают свежий снимок метрик.
-    /// Вызывается из фонового потока — биндинг должен маршалировать в UI-поток.
+    /// Событие нового снимка метрик.
+    /// На него должна подписываться ViewModel: сервис не знает про UI, а просто сообщает, что появились свежие данные.
+    /// Событие вызывается из фонового потока, поэтому ViewModel должна переносить обновление свойств в UI-поток Avalonia.
     /// </summary>
     public event Action<MetricsSnapshot>? SnapshotReceived;
 
+    /// <summary>
+    /// Получает зависимости через конструктор.
+    /// provider отвечает за фактический сбор метрик, settingsRepo отвечает за чтение интервала и порогов из настроек.
+    /// Такой подход соответствует Dependency Injection: сервис не создает реализации сам и остается независимым от Infrastructure.
+    /// </summary>
     public MonitoringService(
         IMetricsProvider provider,
         ISettingsRepository settingsRepo)
@@ -27,6 +34,11 @@ public sealed class MonitoringService : BackgroundService
         _settingsRepo = settingsRepo;
     }
 
+    /// <summary>
+    /// Основной рабочий цикл мониторинга.
+    /// Метод вызывается hosting-системой после старта фонового сервиса и работает до тех пор, пока не будет запрошена остановка приложения.
+    /// На каждом круге он заново читает настройки, поэтому изменение интервала может примениться без переписывания логики сервиса.
+    /// </summary>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
