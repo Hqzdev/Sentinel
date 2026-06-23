@@ -13,7 +13,7 @@ namespace SystemMonitor.App.ViewModels;
 public sealed class ProcessListViewModel : ViewModelBase
 {
     // таймер периодически пересобирает список процессов
-    private readonly Timer _timer;
+    private readonly System.Timers.Timer _timer;
 
     // набор имён для демонстрационных процессов
     // позже эти имена должны прийти из ProcessMetricsService
@@ -35,7 +35,7 @@ public sealed class ProcessListViewModel : ViewModelBase
         Processes = new ObservableCollection<ProcessRowViewModel>();
 
         // обновляем таблицу раз в полторы секунды
-        _timer = new Timer(1500);
+        _timer = new System.Timers.Timer(1500);
         _timer.Elapsed += (_, _) => Dispatcher.UIThread.Post(Refresh);
         _timer.Start();
 

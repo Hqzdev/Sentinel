@@ -11,7 +11,7 @@ namespace SystemMonitor.App.ViewModels;
 public sealed class OverviewViewModel : ViewModelBase
 {
     // таймер обновляет значения раз в секунду
-    private readonly Timer _timer;
+    private readonly System.Timers.Timer _timer;
 
     // random нужен только для демо-метрик
     private readonly Random _random = new();
@@ -26,7 +26,7 @@ public sealed class OverviewViewModel : ViewModelBase
     {
         // таймер работает не на ui потоке
         // поэтому обновление отправляем через Dispatcher.UIThread
-        _timer = new Timer(1000);
+        _timer = new System.Timers.Timer(1000);
         _timer.Elapsed += (_, _) => Dispatcher.UIThread.Post(Refresh);
         _timer.Start();
 

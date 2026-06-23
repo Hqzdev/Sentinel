@@ -3,6 +3,7 @@ bin/
 obj/
 out/
 publish/
+work/
 
 # Visual Studio
 .vs/
@@ -48,4 +49,3 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
-

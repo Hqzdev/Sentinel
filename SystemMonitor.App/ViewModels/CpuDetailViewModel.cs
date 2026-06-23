@@ -12,7 +12,7 @@ namespace SystemMonitor.App.ViewModels;
 public sealed class CpuDetailViewModel : ViewModelBase
 {
     // таймер обновляет показатели процессора
-    private readonly Timer _timer;
+    private readonly System.Timers.Timer _timer;
 
     // random нужен только пока нет подключения к core сервисам
     private readonly Random _random = new();
@@ -32,7 +32,7 @@ public sealed class CpuDetailViewModel : ViewModelBase
         }
 
         // обновляем данные немного реже чем обзор чтобы экран не дёргался слишком часто
-        _timer = new Timer(1200);
+        _timer = new System.Timers.Timer(1200);
         _timer.Elapsed += (_, _) => Dispatcher.UIThread.Post(Refresh);
         _timer.Start();
 
